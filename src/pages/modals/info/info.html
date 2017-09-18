@@ -1,0 +1,134 @@
+<style>
+	.sk-folding-cube {
+		margin: 40px auto;
+		width: 100px;
+		height: 100px;
+		position: relative;
+		-webkit-transform: rotateZ(45deg);
+        transform: rotateZ(45deg);
+	}
+
+	.sk-folding-cube .sk-cube {
+		float: left;
+		width: 50%;
+		height: 50%;
+		position: relative;
+		-webkit-transform: scale(1.1);
+			-ms-transform: scale(1.1);
+			transform: scale(1.1); 
+	}
+	.sk-folding-cube .sk-cube:before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #333;
+		-webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+				animation: sk-foldCubeAngle 2.4s infinite linear both;
+		-webkit-transform-origin: 100% 100%;
+			-ms-transform-origin: 100% 100%;
+				transform-origin: 100% 100%;
+	}
+	.sk-folding-cube .sk-cube2 {
+		-webkit-transform: scale(1.1) rotateZ(90deg);
+				transform: scale(1.1) rotateZ(90deg);
+	}
+	.sk-folding-cube .sk-cube3 {
+		-webkit-transform: scale(1.1) rotateZ(180deg);
+				transform: scale(1.1) rotateZ(180deg);
+	}
+	.sk-folding-cube .sk-cube4 {
+		-webkit-transform: scale(1.1) rotateZ(270deg);
+				transform: scale(1.1) rotateZ(270deg);
+	}
+	.sk-folding-cube .sk-cube2:before {
+		-webkit-animation-delay: 0.3s;
+				animation-delay: 0.3s;
+	}
+	.sk-folding-cube .sk-cube3:before {
+		-webkit-animation-delay: 0.6s;
+				animation-delay: 0.6s; 
+	}
+	.sk-folding-cube .sk-cube4:before {
+		-webkit-animation-delay: 0.9s;
+				animation-delay: 0.9s;
+	}
+	@-webkit-keyframes sk-foldCubeAngle {
+		0%, 10% {
+			-webkit-transform: perspective(140px) rotateX(-180deg);
+					transform: perspective(140px) rotateX(-180deg);
+			opacity: 0; 
+		} 25%, 75% {
+			-webkit-transform: perspective(140px) rotateX(0deg);
+					transform: perspective(140px) rotateX(0deg);
+			opacity: 1; 
+		} 90%, 100% {
+			-webkit-transform: perspective(140px) rotateY(180deg);
+					transform: perspective(140px) rotateY(180deg);
+			opacity: 0; 
+		} 
+	}
+
+	@keyframes sk-foldCubeAngle {
+		0%, 10% {
+			-webkit-transform: perspective(140px) rotateX(-180deg);
+					transform: perspective(140px) rotateX(-180deg);
+			opacity: 0; 
+		} 25%, 75% {
+			-webkit-transform: perspective(140px) rotateX(0deg);
+					transform: perspective(140px) rotateX(0deg);
+			opacity: 1; 
+		} 90%, 100% {
+			-webkit-transform: perspective(140px) rotateY(180deg);
+					transform: perspective(140px) rotateY(180deg);
+			opacity: 0; 
+		}
+	}
+</style>
+
+<ion-header>
+  <ion-toolbar color="dark2">
+    <ion-title>
+      Informações
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()" large icon-only>
+        <ion-icon name="close-circle" color="light"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+	<div class="sk-folding-cube">
+		<div class="sk-cube1 sk-cube"></div>
+		<div class="sk-cube2 sk-cube"></div>
+		<div class="sk-cube4 sk-cube"></div>
+		<div class="sk-cube3 sk-cube"></div>
+	</div>
+	<h4 text-center no-margin>Produzido por</h4>
+	<h2 text-center no-margin style="text-decoration: underline;">Gabriel Soares</h2>
+	<h5 text-center no-margin>v1.0.0</h5>
+	<ion-list>
+		<ion-item>
+			Ambiente de desenvolvimento
+			<ul>
+				<li>Ionic Framework: 3.6.1</li>
+				<li>Ionic App Scripts: 2.1.4</li>
+				<li>Angular Core: 4.1.3</li>
+				<li>Angular Compiler CLI: 4.1.3</li>
+				<li>Node: 6.11.0</li> 
+				<li>OS Platform: Windows 10</li>
+			</ul>
+		</ion-item>
+		<ion-item>
+			Código-fonte e .apk disponível em:<br>
+			<a href="https://github.com/gabr131/socode.ieee.git" target="_black">socode.ieee GitHub</a>
+		</ion-item>
+		<ion-item>
+			Script principal:<br>
+			<strong>./ieee/src/pages/home/home.ts</strong>
+		</ion-item>
+	</ion-list>
+</ion-content>

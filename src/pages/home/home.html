@@ -1,14 +1,98 @@
+<style>
+	.div-overflow {
+		width: 100%;
+		overflow: auto;
+		word-wrap: normal;
+		white-space: nowrap;
+	}
+</style>
+
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="dark2">
     <ion-title>
-      Ionic Blank
+      Cálculo do padrão IEEE-754
     </ion-title>
+	<ion-buttons end>
+      <button ion-button icon-only (click)="f_openModalInfo()">
+          <ion-icon name="information"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+	<ion-list>
+		<ion-item>
+			<ion-label floating>Valor</ion-label>
+			<ion-input type="text" [(ngModel)]="decimalValue" (blur)="decimalValue = isNumber(decimalValue);"></ion-input>
+		</ion-item>
+	</ion-list>
+	<ion-list>
+		<ion-item>
+			<ion-label>Padrão</ion-label>
+			<ion-select [(ngModel)]="numBits" ([init])="numBits='b32'" cancelText="Cancelar" (ionChange)="echoCon(numBits)" okText="Selecionar">
+				<ion-option value="b32">32 bits (float)</ion-option>
+				<ion-option value="b64">64 bits (double)</ion-option>
+			</ion-select>
+		</ion-item>
+	</ion-list>
+	<ion-card *ngIf="numBits">
+		<ion-card-content>
+			<ion-card-title>
+				Configuração do padrão
+			</ion-card-title>
+				<p *ngIf="numBits == 'b32'">
+					Sinal: 1 bit<br>
+					Expoente: 8 bits<br>
+					Mantissa: 23 bits<br>
+					Faixa de valores: 2<sup>-126</sup> <ion-icon name="arrow-forward"></ion-icon> 2<sup>127</sup><br>
+					BIAS: {{f_calcBias(8, false)}}
+				</p>
+				<p *ngIf="numBits == 'b64'">
+					Sinal: 1 bit<br>
+					Expoente: 11 bits<br>
+					Mantissa: 52 bits<br>
+					Faixa de valores: 2<sup>-1022</sup> <ion-icon name="arrow-forward"></ion-icon> 2<sup>1023</sup><br>
+					BIAS: {{f_calcBias(11, false)}}
+				</p>
+		</ion-card-content>
+	</ion-card>
+	<div padding>
+		<button ion-button full (click)="f_calcIEE(decimalValue, numBits)" [attr.disabled]="!numBits || !isNumber(decimalValue) ? true : null">Calcular IEEE-754</button>
+	</div>
+	<div *ngIf="g.resultIEEE">
+		<p>{{g.dataIEEE.m}}</p>
+		<div *ngIf="g.dataIEEE.s">
+			<ion-list>
+				<ion-item>Original:<br><strong>{{g.dataIEEE.original}}</strong></ion-item>  
+				<ion-item>Sinal: <br>
+				<strong>{{g.dataIEEE.sinal}} ({{g.dataIEEE.sinal == '0' ? 'Positivo' : 'Negativo'}})</strong></ion-item>  
+				<ion-item>Valor inteiro:<br><strong>{{g.dataIEEE.integer}}</strong></ion-item>
+				<ion-item>Binário equivalente inteiro:<br>
+				<div class="div-overflow"><strong>{{g.dataIEEE.binaryInt}} 
+				({{g.dataIEEE.binaryIntReverse}}<span *ngIf="g.dataIEEE.integer != g.dataIEEE.binaryIntReverse" style="color:red"> Diferente</span>)</strong></div>
+				</ion-item>
+				<ion-item>Valor decimal:<br><strong>{{g.dataIEEE.decimal}}</strong></ion-item>
+				<ion-item>Binário equivalente decimal:<br>
+				<div class="div-overflow"><strong>{{g.dataIEEE.binaryDecimal}} 
+				({{g.dataIEEE.binaryDecimalReverse}}<span *ngIf="g.dataIEEE.decimal != g.dataIEEE.binaryDecimalReverse && g.dataIEEE.decimal != 0" style="color:red"> Diferente</span>)</strong></div>
+				</ion-item>
+				<ion-item>Mantissa:<br>
+				<div class="div-overflow"><strong>{{g.dataIEEE.mantissa}}</strong></div></ion-item>
+				<ion-item>Expoente: <strong>{{g.dataIEEE.expoente}}</strong></ion-item>
+				<ion-item>Normalizado:<br>
+				<div class="div-overflow"><strong>{{g.dataIEEE.normalized}}</strong></div></ion-item>
+				<ion-item>BIAS: <strong>{{g.dataIEEE.bias}} ({{g.dataIEEE.numberBias}})</strong></ion-item>
+				<ion-item>IEEE-754: 
+				<div class="div-overflow">
+					<strong style="color:red">{{g.dataIEEE.sinal}}</strong>
+					<strong style="color:green">{{g.dataIEEE.bias}}</strong>
+					<strong style="color:blue">{{g.dataIEEE.mantissa}}</strong>
+					<br>
+					<strong style="color:orange">{{g.dataIEEE.binIEEEMount}}</strong>
+				</div></ion-item>
+				<ion-item>HEX: <strong>{{g.dataIEEE.hex}}</strong></ion-item>
+			</ion-list>
+		</div>
+	</div>
 </ion-content>

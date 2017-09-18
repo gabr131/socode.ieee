@@ -1,5 +1,8 @@
 {
   "name": "ieee",
-  "app_id": "",
-  "type": "ionic-angular"
+  "app_id": "socode.ieee",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }
