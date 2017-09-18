@@ -51,7 +51,7 @@ export class HomePage {
 			let a_resultConvertInt = this.f_convertIntBinary(v_decimalBias);
 			v_binaryBias = String(a_resultConvertInt[0]);
 			while (v_binaryBias.length < v_bits) {
-				v_binaryBias += '0';
+				v_binaryBias = '0'+v_binaryBias;
 			}
 			return [v_binaryBias, v_decimalBias];
 		} else return v_offSetBias;
@@ -187,7 +187,7 @@ export class HomePage {
 		v_value = Number(v_value);
 		let v_binaryDec: string = '';	// Onde será armazenado o valor binário
 		let v_equivalentBinary: number = 0;	// Onde será armazenado o reverso do binário comparado
-		if (v_value >= 1) return ['0.0', '0.0']; // return (string | string)
+		if (v_value >= 1 || v_value == 0.0) return ['0', '0.0']; // return (string | string)
 		else { // Converte a parte inteira do número
 			let v_initCount = false;
 			let v_finishCount = false;
@@ -251,6 +251,10 @@ export class HomePage {
 			console.log(v_exp, v_idxN1, v_precision, v_decimal, v_idxN1+v_precision+1);
 			v_exp *= -1;
 		}
+		while (v_mantissa.length < v_precision) {
+			v_mantissa += '0';
+		}
+		
 		// return (string | string | number ) -> mantissa | nomalizado | expoente
 		return [v_mantissa, 
 			'1.'+v_mantissa+' * 2^'+String(v_exp), 
