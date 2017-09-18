@@ -63,7 +63,24 @@
 	<div *ngIf="g.resultIEEE">
 		<p>{{g.dataIEEE.m}}</p>
 		<div *ngIf="g.dataIEEE.s">
-			<ion-list>
+			<ion-list *ngIf="g.dataIEEE.isZero">
+				<ion-item>Original:<br><strong>{{g.dataIEEE.original}}</strong></ion-item>  
+				<ion-item>Sinal: <br>
+				<strong>{{g.dataIEEE.sinal}} ({{g.dataIEEE.sinal == '0' ? 'Positivo' : 'Negativo'}})</strong></ion-item>  
+				<ion-item>Mantissa:<br>
+				<div class="div-overflow"><strong>{{g.dataIEEE.mantissa}}</strong></div></ion-item>
+				<ion-item>BIAS: <strong>{{g.dataIEEE.bias}} ({{g.dataIEEE.numberBias}})</strong></ion-item>
+				<ion-item>IEEE-754: 
+				<div class="div-overflow">
+					<strong style="color:red">{{g.dataIEEE.sinal}}</strong>
+					<strong style="color:green">{{g.dataIEEE.bias}}</strong>
+					<strong style="color:blue">{{g.dataIEEE.mantissa}}</strong>
+					<br>
+					<strong style="color:orange">{{g.dataIEEE.binIEEEMount}}</strong>
+				</div></ion-item>
+				<ion-item>HEX: <strong>{{g.dataIEEE.hex}}</strong></ion-item>
+			</ion-list>
+			<ion-list *ngIf="!g.dataIEEE.isZero">
 				<ion-item>Original:<br><strong>{{g.dataIEEE.original}}</strong></ion-item>  
 				<ion-item>Sinal: <br>
 				<strong>{{g.dataIEEE.sinal}} ({{g.dataIEEE.sinal == '0' ? 'Positivo' : 'Negativo'}})</strong></ion-item>  

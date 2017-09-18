@@ -28,6 +28,7 @@ export class HomePage {
 			ieee:'',
 			hex:'',
 			binIEEEMount:'',
+			isZero:false,
 			s:false
 		}
 	};
@@ -58,7 +59,6 @@ export class HomePage {
 	
 	f_calcIEE (v_value, v_defaultBits:string) {
 		this.g.resultIEEE = true;
-		console.log(!v_defaultBits, !this.isNumber(v_value), v_value);
 		if (!v_defaultBits || !this.isNumber(v_value)) return;
 		
 		if (v_value >= 0) {
@@ -70,11 +70,11 @@ export class HomePage {
 		this.g.dataIEEE.original = v_value;
 		
 		let v_bitsMantissa:number;
-		let v_bitsExpoente:number;
+		let v_bitsExpoente:number;		
 		
 		switch(v_defaultBits) {
 			case('b32'):
-				if (v_value != 0 && (v_value > Number(math.pow(2, 127)) || v_value < Number(math.pow(2, -126)))) {
+				if (v_value != 0.0 && (v_value > Number(math.pow(2, 127)) || v_value < Number(math.pow(2, -126)))) {
 					this.g.dataIEEE.m = "O valor é inválido para a faixa de valores do float";
 					this.g.dataIEEE.s = false;
 					return;
@@ -83,7 +83,7 @@ export class HomePage {
 				v_bitsExpoente = 8;
 			break;
 			case('b64'):
-				if (v_value != 0 && v_value > Number(math.pow(2, 1023)) || v_value < Number(math.pow(2, -1022))) {
+				if (v_value != 0.0 && (v_value > Number(math.pow(2, 1023)) || v_value < Number(math.pow(2, -1022)))) {
 					this.g.dataIEEE.m = "O valor é inválido para a faixa de valores do double";
 					this.g.dataIEEE.s = false;
 					return;
@@ -92,44 +92,65 @@ export class HomePage {
 				v_bitsExpoente = 11;
 			break;
 		}
-		
-		// return (string | string)
-		let a_resultAnalysis = this.f_analysisDecimal(v_value); 
-		this.g.dataIEEE.integer = a_resultAnalysis[0];
-		this.g.dataIEEE.decimal = a_resultAnalysis[1];
-		
-		// return (string | number)
-		let a_resultIntConvert = this.f_convertIntBinary(this.g.dataIEEE.integer);
-		this.g.dataIEEE.binaryInt = String(a_resultIntConvert[0]);
-		this.g.dataIEEE.binaryIntReverse = String(a_resultIntConvert[1]); 
-		
-		// return (string | number)
-		let a_resultDecConvert = this.f_convertDecBinary(this.g.dataIEEE.decimal, v_bitsMantissa);
-		this.g.dataIEEE.binaryDecimal = String(a_resultDecConvert[0]);
-		this.g.dataIEEE.binaryDecimalReverse = String(a_resultDecConvert[1]);
-		
-		// return (string | string | number)
-		let a_resultMountNormalized = this.f_mountNormalized(
-			this.g.dataIEEE.binaryInt, this.g.dataIEEE.binaryDecimal, v_bitsMantissa);
-		this.g.dataIEEE.mantissa = String(a_resultMountNormalized[0]);
-		this.g.dataIEEE.normalized = String(a_resultMountNormalized[1]);
-		this.g.dataIEEE.expoente = Number(a_resultMountNormalized[2]);
-		
-		// return (string | number)
-		let a_resultCalcBias = this.f_calcBias(v_bitsExpoente, true, this.g.dataIEEE.expoente);
-		this.g.dataIEEE.bias = String(a_resultCalcBias[0]);
-		this.g.dataIEEE.numberBias = Number(a_resultCalcBias[1]);
+		if (v_value == 0.0) {
+			this.f_mountIEEEZero(v_bitsMantissa, v_bitsExpoente);
+		} else {
+			// return (string | string)
+			let a_resultAnalysis = this.f_analysisDecimal(v_value); 
+			this.g.dataIEEE.integer = a_resultAnalysis[0];
+			this.g.dataIEEE.decimal = a_resultAnalysis[1];
+			
+			// return (string | number)
+			let a_resultIntConvert = this.f_convertIntBinary(this.g.dataIEEE.integer);
+			this.g.dataIEEE.binaryInt = String(a_resultIntConvert[0]);
+			this.g.dataIEEE.binaryIntReverse = String(a_resultIntConvert[1]); 
+			
+			// return (string | number)
+			let a_resultDecConvert = this.f_convertDecBinary(this.g.dataIEEE.decimal, v_bitsMantissa);
+			this.g.dataIEEE.binaryDecimal = String(a_resultDecConvert[0]);
+			this.g.dataIEEE.binaryDecimalReverse = String(a_resultDecConvert[1]);
+			
+			// return (string | string | number)
+			let a_resultMountNormalized = this.f_mountNormalized(
+				this.g.dataIEEE.binaryInt, this.g.dataIEEE.binaryDecimal, v_bitsMantissa);
+			this.g.dataIEEE.mantissa = String(a_resultMountNormalized[0]);
+			this.g.dataIEEE.normalized = String(a_resultMountNormalized[1]);
+			this.g.dataIEEE.expoente = Number(a_resultMountNormalized[2]);
+			
+			// return (string | number)
+			let a_resultCalcBias = this.f_calcBias(v_bitsExpoente, true, this.g.dataIEEE.expoente);
+			this.g.dataIEEE.bias = String(a_resultCalcBias[0]);
+			this.g.dataIEEE.numberBias = Number(a_resultCalcBias[1]);
+			this.g.dataIEEE.ieee = this.g.dataIEEE.sinal + 
+				this.g.dataIEEE.bias +
+				this.g.dataIEEE.mantissa;
+			
+			// return (string | string)
+			let a_resultHexIEEE = this.f_mountIEEEHex(this.g.dataIEEE.ieee);
+			this.g.dataIEEE.hex = String(a_resultHexIEEE[0]);
+			this.g.dataIEEE.binIEEEMount = String(a_resultHexIEEE[1]);
+			
+			this.g.dataIEEE.m = 'Resultado: ';
+			this.g.dataIEEE.isZero = false;
+			this.g.dataIEEE.s = true;
+		}
+	}
+	
+	f_mountIEEEZero (v_bitsMantissa, v_bitsExpoente) {
+		this.g.dataIEEE.sinal = '0';
+		this.g.dataIEEE.mantissa = '0'.repeat(v_bitsMantissa);
+		this.g.dataIEEE.bias = '0'.repeat(v_bitsExpoente);
 		this.g.dataIEEE.ieee = this.g.dataIEEE.sinal + 
 			this.g.dataIEEE.bias +
 			this.g.dataIEEE.mantissa;
 		
 		// return (string | string)
 		let a_resultHexIEEE = this.f_mountIEEEHex(this.g.dataIEEE.ieee);
-		console.log(a_resultHexIEEE);
 		this.g.dataIEEE.hex = String(a_resultHexIEEE[0]);
 		this.g.dataIEEE.binIEEEMount = String(a_resultHexIEEE[1]);
 		
 		this.g.dataIEEE.m = 'Resultado: ';
+		this.g.dataIEEE.isZero = true;
 		this.g.dataIEEE.s = true;
 	}
 	
@@ -168,12 +189,20 @@ export class HomePage {
 		let v_equivalentBinary: number = 0;	// Onde será armazenado o reverso do binário comparado
 		if (v_value >= 1) return ['0.0', '0.0']; // return (string | string)
 		else { // Converte a parte inteira do número
-			for(let i = 1; i <= v_limit; i++) { // Realiza o loop conforme o limite estabelecido
+			let v_initCount = false;
+			let v_finishCount = false;
+			for(let i = 1, j = 0; !v_finishCount; i++) { // Realiza o loop conforme o limite estabelecido
 				v_value *= 2;
-				let v_intMulti = parseInt(v_value); // Pega o inteiro da multiplicação (apenas 1 | 0)
+				let v_intMulti = Math.trunc(v_value); // Pega o inteiro da multiplicação (apenas 1 | 0)
+				if (v_intMulti == 1) {
+					v_initCount = true;
+				}
+				if (v_initCount) j++;
+				console.log(i, j, v_intMulti, v_initCount);
 				v_binaryDec += String(v_intMulti); // Concatena o valor do binário
 				v_equivalentBinary += v_intMulti*2**(-1 * i); // Realiza o caminho inverso
 				v_value %= 1; // Remove o inteiro, mantendo apenas o decimal
+				if (j == v_limit+1 && v_initCount) v_finishCount = true;
 			}
 		} 
 		return [v_binaryDec, v_equivalentBinary]; // return (string | number)
@@ -218,9 +247,9 @@ export class HomePage {
 		} else {
 			let v_idxN1 = v_decimal.indexOf('1');
 			v_exp = v_idxN1+1;
-			v_mantissa = v_decimal.slice(v_exp, v_idxN1+v_precision);
+			v_mantissa = v_decimal.slice(v_exp, v_idxN1+v_precision+1);
+			console.log(v_exp, v_idxN1, v_precision, v_decimal, v_idxN1+v_precision+1);
 			v_exp *= -1;
-			console.log(v_exp,v_mantissa);
 		}
 		// return (string | string | number ) -> mantissa | nomalizado | expoente
 		return [v_mantissa, 
@@ -229,6 +258,7 @@ export class HomePage {
 	}
 	
 	isNumber(val){
+		val = val.replace(',','.');
 		var RegExp = /^(\-)?[0-9]+(\.[0-9]+)?$/;
 		var match = RegExp.exec(val);
 		if (match) {
